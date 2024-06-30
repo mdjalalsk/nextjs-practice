@@ -20,9 +20,9 @@ const handleRegister=async (e:React.FormEvent)=>{
         });
         const { data,token} = response.data;
        if(token){
-        setAccessToken('accessToken', token)
+        setAccessToken('accessToken',token)
        }
-       console.log(data);
+    //    console.log(token);
           dispatch(setUser(data))
           router.push('/login');
     } catch (error:any) {
@@ -58,7 +58,7 @@ const handleRegister=async (e:React.FormEvent)=>{
                                 <input type="password" placeholder="password" className="input input-bordered"
                                    name="password" onBlur={(e)=>setRegUser({...regUser,password:e.target.value})}    required/>
                             </div>
-                            <div className="form-control mt-6">aj
+                            <div className="form-control mt-6">
                                 <button className="btn btn-primary">Register</button>
                             </div>
                         </form>

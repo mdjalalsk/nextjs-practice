@@ -18,7 +18,6 @@ export default function Login() {
 
     const handleLogin = async (e:React.FormEvent) => {
         e.preventDefault();
-  
         try {
             const response = await axiosInstance.post('/api/login', {
                 email: userinfo.email,
@@ -26,9 +25,10 @@ export default function Login() {
             });
             const {data,accessToken,refreshToken} = response.data; 
             const existAccessToken=getAccessToken('accessToken')
+           
             if(!existAccessToken && accessToken && refreshToken){
-               setAccessToken("accessToken", accessToken);
-               setRefreshToken("refeshToken", refreshToken)
+               setAccessToken('accessToken', accessToken);
+                setRefreshToken('refreshToken', refreshToken)
                dispatch(setTokens({ accessToken, refreshToken }));
             }
             dispatch(setUser(data));

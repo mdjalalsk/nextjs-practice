@@ -1,6 +1,5 @@
 import { getAccessToken } from '@/actions/authAction';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
