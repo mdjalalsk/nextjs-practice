@@ -1,3 +1,4 @@
+import { getAccessToken } from '@/actions/authAction';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -9,7 +10,8 @@ const axiosInstance = axios.create({
 // Request interceptor to add JWT token to headers
 axiosInstance.interceptors.request.use(
     (config) => {
-        const accessToken = Cookies.get('accessToken');
+        const accessToken = getAccessToken('accessToken');
+        console.log(accessToken);
         if (accessToken) {
             config.headers.Authorization = accessToken;
         }
@@ -34,7 +36,7 @@ axiosInstance.interceptors.request.use(
 //                 const response = await axiosInstance.post('/api/refresh-token', { token: refreshToken });
 //                 const { accessToken } = response.data;
 //                 Cookies.set('accessToken', accessToken, { expires: 1, secure: true, sameSite: 'Strict' });
-//                 axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+//                 axios.defaults.headers.common['Authorization'] = ` ${accessToken}`;
 //                 return axiosInstance(originalRequest);
 //             } catch (error) {
 //                 // Handle token refresh failure (e.g., redirect to login)

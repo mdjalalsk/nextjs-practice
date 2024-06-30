@@ -1,12 +1,13 @@
+"use client";
 import React from 'react';
-import {Provider} from "react-redux";
-import {store} from "@/redux/store";
+import { Provider } from 'react-redux';
+import store from '@/redux/store';
 
-const AuthProvider = ({children}:any) => {
+const AuthProvider = ({ children }: any) => {
     return (
-       <Provider store={store}>
-           {children}
-       </Provider>
+        <Provider store={store}>
+            {children}
+        </Provider>
     );
 };
 

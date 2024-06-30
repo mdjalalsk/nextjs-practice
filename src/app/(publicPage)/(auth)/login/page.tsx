@@ -3,34 +3,41 @@ import Cookies from 'js-cookie';
 import {useState} from "react";
 import axiosInstance from "@/axios/axiosInstance";
 import {useRouter} from "next/navigation";
+import { useAppDispatch } from '@/redux/reducHook';
+import { setError, setTokens, setUser } from '@/redux/features/authSlice';
+import { getAccessToken, setAccessToken,setRefreshToken } from '@/actions/authAction';
 
 
 export default function Login() {
     const router = useRouter();
-
+    const dispatch = useAppDispatch()
     const [userinfo, setUserInfo] = useState({
         email:"",
         password:""
     });
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e:React.FormEvent) => {
         e.preventDefault();
-     // console.log(userinfo);
+  
         try {
             const response = await axiosInstance.post('/api/login', {
                 email: userinfo.email,
                 password: userinfo.password,
             });
-            const { data } = response.data;
-            if(data){
-                console.log("log sucess");
-                router.push('/about');
-
+            const {data,accessToken,refreshToken} = response.data; 
+            const existAccessToken=getAccessToken('accessToken')
+            if(!existAccessToken && accessToken && refreshToken){
+               setAccessToken("accessToken", accessToken);
+               setRefreshToken("refeshToken", refreshToken)
+               dispatch(setTokens({ accessToken, refreshToken }));
             }
-
-        } catch (error) {
+            dispatch(setUser(data));
+            router.push('/about');
+            // Redirect to another page upon successful login
+        } catch (error:any) {
             console.error('Login failed:', error);
-            // Optionally handle error responses, e.g., display error messages to the user
+            dispatch(setError(error.message))
+
         }
     };
 
