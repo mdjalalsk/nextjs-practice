@@ -5,7 +5,10 @@ const homePage = () => {
     return (
           <div className="container mx-auto">
               <h1>Hello word</h1>
-              <ButtonComponent className={'text-white btn btn-primary'}>Add to cart</ButtonComponent>
+              <ButtonComponent
+                  className="bg-blue-500 text-white btn">
+                  Submit
+              </ButtonComponent>
         </div>
     );
 }

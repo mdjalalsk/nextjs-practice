@@ -79,9 +79,12 @@ const Navber = () => {
                 </div>
 
                 <div className="navbar-end">
-                    <ul className="">
+                    <ul className="flex gap-2">
                         <li>
                             <Link className={`link ${pathname === '/login' ? 'active text-blue-700 font-bold text-lg  ' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/login">Login</Link>
+                        </li>
+                        <li>
+                            <Link className={`link ${pathname === '/register' ? 'active text-blue-700 font-bold text-lg  ' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/register">Register</Link>
                         </li>
                     </ul>
                 </div>
