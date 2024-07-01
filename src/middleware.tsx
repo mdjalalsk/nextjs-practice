@@ -1,8 +1,7 @@
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { AUTH_KEY } from './constant/authConstatn';
-import { getAccessToken } from './action/authAction';
+import {getAccessToken} from "@/actions/authAction";
 
 const AuthRoutes = [
     '/login',
@@ -11,15 +10,14 @@ const AuthRoutes = [
 ];
 
 const commonPrivateRoutes = [
-    '/dashboard222',
+    '/dashboard',
 
 ];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const {pathname} = request.nextUrl;
-    // const accessToken = cookies().get(AUTH_KEY)?.value;
-    const accessToken = getAccessToken(AUTH_KEY);
-    // console.log({pathname,accessToken});
+    const accessToken =await getAccessToken('accessToken');
+    // console.log(accessToken);
 
     // check authenticattion
     if (!accessToken) {

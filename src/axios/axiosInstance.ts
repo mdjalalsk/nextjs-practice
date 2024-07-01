@@ -1,22 +1,26 @@
 import { getAccessToken } from '@/actions/authAction';
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
+import {logout} from "@/redux/features/authSlice";
+import store from "@/redux/store";
 
 // Create an Axios instance
 const axiosInstance = axios.create({
     baseURL: "http://localhost:3000",
 });
+const { dispatch } = store;
 
 // Request interceptor to add JWT token to headers
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const accessToken = getAccessToken('accessToken');
-        console.log(accessToken);
-        if (accessToken) {
-            config.headers.Authorization = accessToken;
-        }
-        return config;
-    },
+async (config: any) => {
+    const accessToken = await getAccessToken('accessToken');
+    // console.log(accessToken);
+    if (accessToken) {
+        config.headers.Authorization = accessToken; // Use Bearer token format
+    }
+    return config;
+},
     (error) => {
+        dispatch(logout()); // Dispatch the logout action on error
         return Promise.reject(error);
     }
 );

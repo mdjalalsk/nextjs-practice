@@ -1,43 +1,56 @@
 "use client"
-import Cookies from 'js-cookie';
-import {useState} from "react";
+import React, { useState } from 'react';
 import axiosInstance from "@/axios/axiosInstance";
-import {useRouter} from "next/navigation";
-import { useAppDispatch } from '@/redux/reducHook';
-import { setError, setTokens, setUser } from '@/redux/features/authSlice';
-import { getAccessToken, setAccessToken,setRefreshToken } from '@/actions/authAction';
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from '@/redux/reducHook';
+import { setError, setTokens, setUser, setLoading } from '@/redux/features/authSlice';
+import { getAccessToken, setAccessToken } from '@/actions/authAction';
 
-
-export default function Login() {
+const Login = () => {
     const router = useRouter();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+
+    // Redux loading state
+    const loading = useAppSelector(state => state.auth.loading);
+
+    // State for user input
     const [userinfo, setUserInfo] = useState({
-        email:"",
-        password:""
+        email: "",
+        password: ""
     });
 
-    const handleLogin = async (e:React.FormEvent) => {
+    // Handler for form submission
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        dispatch(setLoading(true)); // Set loading state to true
+
         try {
+            // Perform login request
             const response = await axiosInstance.post('/api/login', {
                 email: userinfo.email,
                 password: userinfo.password,
             });
-            const {data,accessToken,refreshToken} = response.data; 
-            const existAccessToken=getAccessToken('accessToken')
-           
-            if(!existAccessToken && accessToken && refreshToken){
-               setAccessToken('accessToken', accessToken);
-                setRefreshToken('refreshToken', refreshToken)
-               dispatch(setTokens({ accessToken, refreshToken }));
-            }
-            dispatch(setUser(data));
-            router.push('/about');
-            // Redirect to another page upon successful login
-        } catch (error:any) {
-            console.error('Login failed:', error);
-            dispatch(setError(error.message))
 
+            const { data, accessToken } = response.data;
+
+            // // Set access token in cookies if not already set
+            // const existingAccessToken = getAccessToken('accessToken');
+            // if (!existingAccessToken && accessToken) {
+            //     setAccessToken('accessToken', accessToken);
+            //     dispatch(setTokens({ accessToken }));
+            // }
+
+
+            setAccessToken('accessToken', accessToken);
+            // Update user data in Redux store
+            dispatch(setTokens({ accessToken }));
+            dispatch(setUser(data));
+            dispatch(setLoading(false)); // Set loading state to false
+            router.push('/dashboard'); // Redirect to '/about' upon successful login
+        } catch (error: any) {
+            // console.error('Login failed:', error);
+            dispatch(setError(error.message)); // Set error state in Redux store
+            dispatch(setLoading(false)); // Set loading state to false
         }
     };
 
@@ -62,7 +75,7 @@ export default function Login() {
                                 placeholder="Email"
                                 className="input input-bordered"
                                 value={userinfo.email}
-                                onChange={(e)=>setUserInfo({...userinfo,email:e.target.value})}
+                                onChange={(e) => setUserInfo({ ...userinfo, email: e.target.value })}
                                 required
                             />
                         </div>
@@ -76,13 +89,13 @@ export default function Login() {
                                 name="password"
                                 className="input input-bordered"
                                 value={userinfo.password}
-                                onChange={(e)=>setUserInfo({...userinfo,password:e.target.value})}
+                                onChange={(e) => setUserInfo({ ...userinfo, password: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="form-control mt-6">
                             <button type="submit" className="btn btn-primary">
-                                Login
+                                {loading ? 'Logging in...' : 'Login'}
                             </button>
                         </div>
                     </form>
@@ -90,4 +103,6 @@ export default function Login() {
             </div>
         </div>
     );
-}
+};
+
+export default Login;

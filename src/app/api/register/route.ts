@@ -23,12 +23,12 @@ export async function POST(req: NextRequest) {
         db.users.push(newUser);
 
         // Generate JWT token
-        const token = jwt.sign({userEmail: newUser.email }, secret, { expiresIn: '1h' });
+        // const token = jwt.sign({userEmail: newUser.email }, secret, { expiresIn: '1h' });
 
         // Return success response with user data and token
-        return NextResponse.json({ data: newUser, token }, { status: 201 });
+        return NextResponse.json({ data: newUser}, { status: 201 });
     } catch (error) {
-        console.error('Registration error:', error);
+        // console.error('Registration error:', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

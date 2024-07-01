@@ -4,6 +4,10 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import {usePathname} from "next/navigation";
 import { useRouter } from 'next/navigation'
+import Cookies from "js-cookie";
+import {logout} from "@/redux/features/authSlice";
+import {useAppDispatch, useAppSelector} from "@/redux/reducHook";
+import {RootState} from "@/redux/store";
 
 
 // Define interface for navigation item
@@ -29,7 +33,19 @@ const navItems: NavItem[] = [
 
 const Navber = () => {
     const pathname  =usePathname()
-    // const router = useRouter();
+    const router = useRouter();
+    const dispatch=useAppDispatch();
+    const isAuthenticated = useAppSelector((state: RootState) => state.auth.isAuthenticated);
+    console.log(isAuthenticated);
+    const user = useAppSelector((state: RootState) => state.auth.user);
+    // console.log(user);
+
+// console()
+    const handleLogout = () => {
+        Cookies.remove("accessToken");
+        dispatch(logout());
+        router.push("/login");
+    };
 
     const navItemList = (
         <>
@@ -79,13 +95,29 @@ const Navber = () => {
                 </div>
 
                 <div className="navbar-end">
-                    <ul className="flex gap-2">
-                        <li>
-                            <Link className={`link ${pathname === '/login' ? 'active text-blue-700 font-bold text-lg  ' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/login">Login</Link>
-                        </li>
-                        <li>
-                            <Link className={`link ${pathname === '/register' ? 'active text-blue-700 font-bold text-lg  ' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/register">Register</Link>
-                        </li>
+                    <ul className="flex items-center gap-2">
+                        {!isAuthenticated ? (
+                            <>
+                                <li>
+                                    <Link className={`link ${pathname === '/login' ? 'active text-blue-700 font-bold text-lg' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/login">Login</Link>
+                                </li>
+                                <li>
+                                    <Link className={`link ${pathname === '/register' ? 'active text-blue-700 font-bold text-lg' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/register">Register</Link>
+                                </li>
+                            </>
+                        ) : (
+                            <><li>
+                                <Link className={`link ${pathname === '/dashboard' ? 'active text-blue-700 font-bold text-lg' : 'bg-none font-bold text-lg text-black'} no-underline`} href="/dashboard">{user.email}</Link>
+
+
+                            </li>
+                                <li>
+                                    <button onClick={handleLogout} className="btn btn-secondary">
+                                        Logout
+                                    </button>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>
